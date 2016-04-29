@@ -4,7 +4,7 @@
 #
 Name     : icu4c
 Version  : 55_rc
-Release  : 5
+Release  : 6
 URL      : http://download.icu-project.org/files/icu4c/55rc/icu4c-55_rc-src.tgz
 Source0  : http://download.icu-project.org/files/icu4c/55rc/icu4c-55_rc-src.tgz
 Summary  : International Components for Unicode
