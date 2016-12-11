@@ -4,7 +4,7 @@
 #
 Name     : icu4c
 Version  : 55_rc
-Release  : 8
+Release  : 9
 URL      : http://download.icu-project.org/files/icu4c/55rc/icu4c-55_rc-src.tgz
 Source0  : http://download.icu-project.org/files/icu4c/55rc/icu4c-55_rc-src.tgz
 Summary  : International Components for Unicode
@@ -15,6 +15,11 @@ Requires: icu4c-lib
 Requires: icu4c-data
 Requires: icu4c-doc
 BuildRequires : doxygen
+BuildRequires : gcc-dev32
+BuildRequires : gcc-libgcc32
+BuildRequires : gcc-libstdc++32
+BuildRequires : glibc-dev32
+BuildRequires : glibc-libc32
 
 %description
 ICU is a set of C and C++ libraries that provides robust and full-featured
@@ -61,6 +66,17 @@ Provides: icu4c-devel
 dev components for the icu4c package.
 
 
+%package dev32
+Summary: dev32 components for the icu4c package.
+Group: Default
+Requires: icu4c-lib32
+Requires: icu4c-bin
+Requires: icu4c-data
+
+%description dev32
+dev32 components for the icu4c package.
+
+
 %package doc
 Summary: doc components for the icu4c package.
 Group: Documentation
@@ -78,8 +94,20 @@ Requires: icu4c-data
 lib components for the icu4c package.
 
 
+%package lib32
+Summary: lib32 components for the icu4c package.
+Group: Default
+Requires: icu4c-data
+
+%description lib32
+lib32 components for the icu4c package.
+
+
 %prep
 %setup -q -n icu
+pushd ..
+cp -a icu build32
+popd
 
 %build
 export LANG=C
@@ -88,6 +116,12 @@ pushd source
 make V=1  %{?_smp_mflags}
 popd
 
+pushd ../build32/source
+export CFLAGS="$CFLAGS -m32"
+export CXXFLAGS="$CXXFLAGS -m32"
+%configure --disable-static  --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
+make V=1  %{?_smp_mflags}
+popd
 %check
 export LANG=C
 export http_proxy=http://127.0.0.1:9/
@@ -97,12 +131,26 @@ pushd source ; make check; popd
 
 %install
 rm -rf %{buildroot}
+pushd ../build32/source
+%make_install32
+if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
+then
+pushd %{buildroot}/usr/lib32/pkgconfig
+for i in *.pc ; do mv $i 32$i ; done
+popd
+fi
+popd
 pushd source
 %make_install
 popd
 
 %files
 %defattr(-,root,root,-)
+/usr/lib32/icu/55.1/Makefile.inc
+/usr/lib32/icu/55.1/pkgdata.inc
+/usr/lib32/icu/Makefile.inc
+/usr/lib32/icu/current
+/usr/lib32/icu/pkgdata.inc
 /usr/lib64/icu/55.1/Makefile.inc
 /usr/lib64/icu/55.1/pkgdata.inc
 /usr/lib64/icu/Makefile.inc
@@ -335,6 +383,22 @@ popd
 /usr/lib64/pkgconfig/icu-lx.pc
 /usr/lib64/pkgconfig/icu-uc.pc
 
+%files dev32
+%defattr(-,root,root,-)
+/usr/lib32/libicudata.so
+/usr/lib32/libicui18n.so
+/usr/lib32/libicuio.so
+/usr/lib32/libicule.so
+/usr/lib32/libiculx.so
+/usr/lib32/libicutest.so
+/usr/lib32/libicutu.so
+/usr/lib32/libicuuc.so
+/usr/lib32/pkgconfig/32icu-i18n.pc
+/usr/lib32/pkgconfig/32icu-io.pc
+/usr/lib32/pkgconfig/32icu-le.pc
+/usr/lib32/pkgconfig/32icu-lx.pc
+/usr/lib32/pkgconfig/32icu-uc.pc
+
 %files doc
 %defattr(-,root,root,-)
 %doc /usr/share/man/man1/*
@@ -358,3 +422,22 @@ popd
 /usr/lib64/libicutu.so.55.1
 /usr/lib64/libicuuc.so.55
 /usr/lib64/libicuuc.so.55.1
+
+%files lib32
+%defattr(-,root,root,-)
+/usr/lib32/libicudata.so.55
+/usr/lib32/libicudata.so.55.1
+/usr/lib32/libicui18n.so.55
+/usr/lib32/libicui18n.so.55.1
+/usr/lib32/libicuio.so.55
+/usr/lib32/libicuio.so.55.1
+/usr/lib32/libicule.so.55
+/usr/lib32/libicule.so.55.1
+/usr/lib32/libiculx.so.55
+/usr/lib32/libiculx.so.55.1
+/usr/lib32/libicutest.so.55
+/usr/lib32/libicutest.so.55.1
+/usr/lib32/libicutu.so.55
+/usr/lib32/libicutu.so.55.1
+/usr/lib32/libicuuc.so.55
+/usr/lib32/libicuuc.so.55.1
