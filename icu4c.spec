@@ -4,7 +4,7 @@
 #
 Name     : icu4c
 Version  : 55_rc
-Release  : 7
+Release  : 8
 URL      : http://download.icu-project.org/files/icu4c/55rc/icu4c-55_rc-src.tgz
 Source0  : http://download.icu-project.org/files/icu4c/55rc/icu4c-55_rc-src.tgz
 Summary  : International Components for Unicode
@@ -14,6 +14,7 @@ Requires: icu4c-bin
 Requires: icu4c-lib
 Requires: icu4c-data
 Requires: icu4c-doc
+BuildRequires : doxygen
 
 %description
 ICU is a set of C and C++ libraries that provides robust and full-featured
@@ -54,6 +55,7 @@ Group: Development
 Requires: icu4c-lib
 Requires: icu4c-bin
 Requires: icu4c-data
+Provides: icu4c-devel
 
 %description dev
 dev components for the icu4c package.
@@ -80,15 +82,17 @@ lib components for the icu4c package.
 %setup -q -n icu
 
 %build
+export LANG=C
 pushd source
 %configure --disable-static
 make V=1  %{?_smp_mflags}
 popd
 
 %check
+export LANG=C
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
-export no_proxy=intel.com,localhost
+export no_proxy=localhost
 pushd source ; make check; popd
 
 %install
@@ -317,8 +321,19 @@ popd
 /usr/include/unicode/uvernum.h
 /usr/include/unicode/uversion.h
 /usr/include/unicode/vtzone.h
-/usr/lib64/*.so
-/usr/lib64/pkgconfig/*.pc
+/usr/lib64/libicudata.so
+/usr/lib64/libicui18n.so
+/usr/lib64/libicuio.so
+/usr/lib64/libicule.so
+/usr/lib64/libiculx.so
+/usr/lib64/libicutest.so
+/usr/lib64/libicutu.so
+/usr/lib64/libicuuc.so
+/usr/lib64/pkgconfig/icu-i18n.pc
+/usr/lib64/pkgconfig/icu-io.pc
+/usr/lib64/pkgconfig/icu-le.pc
+/usr/lib64/pkgconfig/icu-lx.pc
+/usr/lib64/pkgconfig/icu-uc.pc
 
 %files doc
 %defattr(-,root,root,-)
@@ -327,4 +342,19 @@ popd
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/*.so.*
+/usr/lib64/libicudata.so.55
+/usr/lib64/libicudata.so.55.1
+/usr/lib64/libicui18n.so.55
+/usr/lib64/libicui18n.so.55.1
+/usr/lib64/libicuio.so.55
+/usr/lib64/libicuio.so.55.1
+/usr/lib64/libicule.so.55
+/usr/lib64/libicule.so.55.1
+/usr/lib64/libiculx.so.55
+/usr/lib64/libiculx.so.55.1
+/usr/lib64/libicutest.so.55
+/usr/lib64/libicutest.so.55.1
+/usr/lib64/libicutu.so.55
+/usr/lib64/libicutu.so.55.1
+/usr/lib64/libicuuc.so.55
+/usr/lib64/libicuuc.so.55.1
