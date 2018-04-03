@@ -1,2 +1,4 @@
 # This file contains the output files that need %exclude. Full path
 # names, one per line.
+/usr/lib32/icu/current
+/usr/lib64/icu/current
