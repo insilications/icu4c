@@ -4,12 +4,12 @@
 #
 Name     : icu4c
 Version  : 61.1
-Release  : 13
+Release  : 14
 URL      : http://download.icu-project.org/files/icu4c/61.1/icu4c-61_1-src.tgz
 Source0  : http://download.icu-project.org/files/icu4c/61.1/icu4c-61_1-src.tgz
 Summary  : International Components for Unicode
 Group    : Development/Tools
-License  : NCSA
+License  : BSD-3-Clause ICU NCSA
 Requires: icu4c-bin
 Requires: icu4c-lib
 Requires: icu4c-data
@@ -116,7 +116,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1522712547
+export SOURCE_DATE_EPOCH=1522714322
 pushd source
 %configure --disable-static
 make  %{?_smp_mflags}
@@ -138,7 +138,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 pushd source ; make check; popd
 
 %install
-export SOURCE_DATE_EPOCH=1522712547
+export SOURCE_DATE_EPOCH=1522714322
 rm -rf %{buildroot}
 pushd ../build32/source
 %make_install32
