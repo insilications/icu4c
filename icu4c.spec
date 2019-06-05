@@ -6,7 +6,7 @@
 #
 Name     : icu4c
 Version  : 64.2
-Release  : 18
+Release  : 19
 URL      : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz
 Source0  : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz
 Source99 : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz.asc
