@@ -6,7 +6,7 @@
 #
 Name     : icu4c
 Version  : 64.2
-Release  : 20
+Release  : 21
 URL      : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz
 Source0  : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz
 Source99 : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz.asc
@@ -133,7 +133,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1560547600
+export SOURCE_DATE_EPOCH=1560548422
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -164,7 +164,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 pushd source ; make check; popd
 
 %install
-export SOURCE_DATE_EPOCH=1560547600
+export SOURCE_DATE_EPOCH=1560548422
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/icu4c
 cp license.html %{buildroot}/usr/share/package-licenses/icu4c/license.html
@@ -183,15 +183,15 @@ popd
 
 %files
 %defattr(-,root,root,-)
-%exclude /usr/lib32/icu/current
-%exclude /usr/lib64/icu/current
 /usr/lib32/icu/64.2/Makefile.inc
 /usr/lib32/icu/64.2/pkgdata.inc
 /usr/lib32/icu/Makefile.inc
+/usr/lib32/icu/current
 /usr/lib32/icu/pkgdata.inc
 /usr/lib64/icu/64.2/Makefile.inc
 /usr/lib64/icu/64.2/pkgdata.inc
 /usr/lib64/icu/Makefile.inc
+/usr/lib64/icu/current
 /usr/lib64/icu/pkgdata.inc
 
 %files bin
