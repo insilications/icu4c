@@ -6,10 +6,10 @@
 #
 Name     : icu4c
 Version  : 64.2
-Release  : 21
+Release  : 22
 URL      : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz
 Source0  : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz
-Source99 : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz.asc
+Source1 : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz.asc
 Summary  : International Components for Unicode
 Group    : Development/Tools
 License  : BSD-3-Clause ICU NCSA
@@ -26,6 +26,7 @@ BuildRequires : glibc-dev32
 BuildRequires : glibc-libc32
 BuildRequires : pkg-config
 BuildRequires : sed
+Patch1: 0001-ICU-20558-Fix-regression-in-DateTimePatternGenerator.patch
 
 %description
 ICU is a set of C and C++ libraries that provides robust and full-featured
@@ -124,6 +125,7 @@ man components for the icu4c package.
 
 %prep
 %setup -q -n icu
+%patch1 -p1
 pushd ..
 cp -a icu build32
 popd
@@ -132,8 +134,8 @@ popd
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1560548422
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1568866614
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -150,21 +152,21 @@ popd
 pushd ../build32/source
 export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
 export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
-export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32"
-export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32"
-export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32"
+export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
+export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
+export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
 %configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make  %{?_smp_mflags}
 popd
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 pushd source ; make check; popd
 
 %install
-export SOURCE_DATE_EPOCH=1560548422
+export SOURCE_DATE_EPOCH=1568866614
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/icu4c
 cp license.html %{buildroot}/usr/share/package-licenses/icu4c/license.html
