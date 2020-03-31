@@ -1,1 +1,2 @@
 0001-ICU-20558-Fix-regression-in-DateTimePatternGenerator.patch
+CVE-2020-10531.patch

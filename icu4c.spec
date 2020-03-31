@@ -6,10 +6,10 @@
 #
 Name     : icu4c
 Version  : 64.2
-Release  : 22
+Release  : 23
 URL      : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz
 Source0  : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz
-Source1 : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz.asc
+Source1  : https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz.asc
 Summary  : International Components for Unicode
 Group    : Development/Tools
 License  : BSD-3-Clause ICU NCSA
@@ -27,6 +27,7 @@ BuildRequires : glibc-libc32
 BuildRequires : pkg-config
 BuildRequires : sed
 Patch1: 0001-ICU-20558-Fix-regression-in-DateTimePatternGenerator.patch
+Patch2: CVE-2020-10531.patch
 
 %description
 ICU is a set of C and C++ libraries that provides robust and full-featured
@@ -125,7 +126,9 @@ man components for the icu4c package.
 
 %prep
 %setup -q -n icu
+cd %{_builddir}/icu
 %patch1 -p1
+%patch2 -p1
 pushd ..
 cp -a icu build32
 popd
@@ -135,7 +138,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1568866614
+export SOURCE_DATE_EPOCH=1585691824
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -166,10 +169,10 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 pushd source ; make check; popd
 
 %install
-export SOURCE_DATE_EPOCH=1568866614
+export SOURCE_DATE_EPOCH=1585691824
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/icu4c
-cp license.html %{buildroot}/usr/share/package-licenses/icu4c/license.html
+cp %{_builddir}/icu/license.html %{buildroot}/usr/share/package-licenses/icu4c/06e7821c4127e21850f5c981698443b6f31e0ef1
 pushd ../build32/source
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
@@ -468,7 +471,7 @@ popd
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/icu4c/license.html
+/usr/share/package-licenses/icu4c/06e7821c4127e21850f5c981698443b6f31e0ef1
 
 %files man
 %defattr(0644,root,root,0755)
