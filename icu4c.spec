@@ -4,7 +4,7 @@
 #
 Name     : icu4c
 Version  : 70.1
-Release  : 26
+Release  : 27
 URL      : https://github.com/unicode-org/icu/releases/download/release-70-1/icu4c-70_1-src.tgz
 Source0  : https://github.com/unicode-org/icu/releases/download/release-70-1/icu4c-70_1-src.tgz
 Summary  : International Components for Unicode
@@ -12,6 +12,7 @@ Group    : Development/Tools
 License  : BSD-3-Clause ICU NCSA
 Requires: icu4c-bin = %{version}-%{release}
 Requires: icu4c-data = %{version}-%{release}
+Requires: icu4c-filemap = %{version}-%{release}
 Requires: icu4c-lib = %{version}-%{release}
 Requires: icu4c-license = %{version}-%{release}
 Requires: icu4c-man = %{version}-%{release}
@@ -45,6 +46,7 @@ Summary: bin components for the icu4c package.
 Group: Binaries
 Requires: icu4c-data = %{version}-%{release}
 Requires: icu4c-license = %{version}-%{release}
+Requires: icu4c-filemap = %{version}-%{release}
 
 %description bin
 bin components for the icu4c package.
@@ -83,11 +85,20 @@ Requires: icu4c-dev = %{version}-%{release}
 dev32 components for the icu4c package.
 
 
+%package filemap
+Summary: filemap components for the icu4c package.
+Group: Default
+
+%description filemap
+filemap components for the icu4c package.
+
+
 %package lib
 Summary: lib components for the icu4c package.
 Group: Libraries
 Requires: icu4c-data = %{version}-%{release}
 Requires: icu4c-license = %{version}-%{release}
+Requires: icu4c-filemap = %{version}-%{release}
 
 %description lib
 lib components for the icu4c package.
@@ -125,13 +136,16 @@ cd %{_builddir}/icu
 pushd ..
 cp -a icu build32
 popd
+pushd ..
+cp -a icu buildavx2
+popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1640902968
+export SOURCE_DATE_EPOCH=1640904447
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -154,6 +168,16 @@ export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
 %configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make  %{?_smp_mflags}
 popd
+unset PKG_CONFIG_PATH
+pushd ../buildavx2/source
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3"
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3"
+%configure --disable-static
+make  %{?_smp_mflags}
+popd
 %check
 export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
@@ -162,9 +186,10 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 pushd source; make %{?_smp_mflags} check; popd
 
 %install
-export SOURCE_DATE_EPOCH=1640902968
+export SOURCE_DATE_EPOCH=1640904447
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/icu4c
+cp %{_builddir}/icu/LICENSE %{buildroot}/usr/share/package-licenses/icu4c/dbcb5c4a57f45a48c971c06928a7c99fb5656f06
 cp %{_builddir}/icu/license.html %{buildroot}/usr/share/package-licenses/icu4c/06e7821c4127e21850f5c981698443b6f31e0ef1
 pushd ../build32/source
 %make_install32
@@ -181,9 +206,13 @@ for i in *.pc ; do ln -s $i 32$i ; done
 popd
 fi
 popd
+pushd ../buildavx2/source
+%make_install_v3
+popd
 pushd source
 %make_install
 popd
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
@@ -218,6 +247,7 @@ popd
 /usr/bin/makeconv
 /usr/bin/pkgdata
 /usr/bin/uconv
+/usr/share/clear/optimized-elf/bin*
 
 %files data
 %defattr(-,root,root,-)
@@ -441,6 +471,10 @@ popd
 /usr/lib32/pkgconfig/icu-io.pc
 /usr/lib32/pkgconfig/icu-uc.pc
 
+%files filemap
+%defattr(-,root,root,-)
+/usr/share/clear/filemap/filemap-icu4c
+
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libicudata.so.70
@@ -455,6 +489,7 @@ popd
 /usr/lib64/libicutu.so.70.1
 /usr/lib64/libicuuc.so.70
 /usr/lib64/libicuuc.so.70.1
+/usr/share/clear/optimized-elf/lib*
 
 %files lib32
 %defattr(-,root,root,-)
@@ -474,6 +509,7 @@ popd
 %files license
 %defattr(0644,root,root,0755)
 /usr/share/package-licenses/icu4c/06e7821c4127e21850f5c981698443b6f31e0ef1
+/usr/share/package-licenses/icu4c/dbcb5c4a57f45a48c971c06928a7c99fb5656f06
 
 %files man
 %defattr(0644,root,root,0755)
