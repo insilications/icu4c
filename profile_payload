@@ -1,2 +1,3 @@
-make -j1 check VERBOSE=1 || :
-exit 1
+make -j16 tests
+make -j1 check || :
+make -j1 xperf || :

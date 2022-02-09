@@ -1,6 +1,6 @@
 --enable-icu-config
---enable-static
---disable-shared
+--disable-static
+--enable-shared
 --enable-extras
 --enable-icuio
 --enable-tools
