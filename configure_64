@@ -1,0 +1,7 @@
+--enable-icu-config
+--enable-static
+--disable-shared
+--enable-extras
+--enable-icuio
+--enable-tools
+--enable-tests
